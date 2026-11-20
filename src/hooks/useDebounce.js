@@ -1,0 +1,2 @@
+// Tous : hook utilitaire
+export {}
