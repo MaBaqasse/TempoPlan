@@ -1,4 +1,4 @@
-// P1 : assemble les sections de la landing page dans l'ordre
+// P1 : assemble les sections de la landing page dans l’ordre
 import Hero from './sections/Hero'
 import Features from './sections/Features'
 import HowItWorks from './sections/HowItWorks'

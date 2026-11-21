@@ -1,16 +1,57 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-/* Design tokens TempoPlan : a utiliser partout (bg-primary, text-accent, etc.) */
+/*
+  Design tokens TempoPlan
+  Palette primary-* = nuances de #4F46E5 (generateur "tints and shades")
+    50-200  : teintes claires (fonds, cartes)    -> 90 %, 80 %, 70 % de blanc
+    300-400 : teintes moyennes
+    500     : couleur de base #4F46E5
+    600-950 : nuances foncees
+  Utilisation : bg-primary-500, text-primary-600, border-primary-200, etc.
+*/
 @theme {
-  --color-primary: #4f46e5;
-  --color-primary-dark: #4338ca;
-  --color-lavender: #eef0ff;
+  --color-primary-50: #ededfc;
+  --color-primary-100: #dcdafa;
+  --color-primary-200: #cac8f7;
+  --color-primary-300: #a7a3f2;
+  --color-primary-400: #726bea;
+  --color-primary-500: #4f46e5;
+  --color-primary-600: #473fce;
+  --color-primary-700: #3f38b7;
+  --color-primary-800: #3731a0;
+  --color-primary-900: #2f2a89;
+  --color-primary-950: #201c5c;
+
+  /* Alias gardes pour les autres modules (bg-primary, bg-lavender...) */
+  --color-primary: var(--color-primary-500);
+  --color-primary-dark: var(--color-primary-600);
+  --color-lavender: var(--color-primary-50);
+
   --color-accent: #f97316;
   --color-success: #22c55e;
   --color-danger: #ef4444;
-  --color-ink: #0f172a;
-  --font-sans: "Inter", "Poppins", system-ui, sans-serif;
+
+  /* Textes : titres et texte courant (a ajuster selon le design Canva) */
+  --color-ink: #333333;
+  --color-muted: #555555;
+
+  --font-sans: 'Rubik Variable', 'Rubik', system-ui, sans-serif;
   --radius-card: 1rem;
 }
 
-body { @apply bg-white text-ink font-sans; }
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  body {
+    background-color: #fff;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}

@@ -1,0 +1,11 @@
+Images attendues par la landing page (exportez-les depuis Canva dans ce dossier) :
+
+hero-illustration.png        illustration du hero (planning + personnages)
+audience-students.jpg        carte "Etudiants"
+audience-professionals.jpg   carte "Professionnels"
+audience-balance.jpg         carte "Toute personne qui veut mieux s'equilibrer"
+cta-planner.jpg              image du bandeau final (planner)
+logo.svg                     (optionnel) votre logo, si vous remplacez l'icone dans Logo.jsx
+
+Conseils : photos en JPG ou WebP, 1200 px de large maximum ; illustration en PNG ou SVG.
+Si un fichier manque, l'image n'apparait pas mais le site continue de fonctionner.
