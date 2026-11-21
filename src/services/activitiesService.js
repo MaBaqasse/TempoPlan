@@ -129,3 +129,5 @@ export function postponeActivity(id, newStart) {
 export function completeActivity(id) {
   return updateActivity(id, { status: 'terminee', completedAt: nowISO() })
 }
+
+export { validate as validateActivity }
