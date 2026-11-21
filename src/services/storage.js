@@ -1,5 +1,4 @@
-// P2 : acces unique a localStorage. Les pages n'appellent JAMAIS localStorage directement.
-// Schema a valider par tout le groupe avant de coder (voir README).
+
 export const KEYS = {
   users: 'tempoplan.users',
   activities: 'tempoplan.activities',
@@ -24,6 +23,20 @@ export function write(key, value) {
   } catch {
     return false
   }
+}
+
+export function remove(key) {
+  try {
+    localStorage.removeItem(key)
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function readList(key) {
+  const value = read(key, [])
+  return Array.isArray(value) ? value : []
 }
 
 export const getSession = () => read(KEYS.session)
