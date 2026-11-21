@@ -1,5 +1,9 @@
-
+// P2 : CRUD des activites.
+// Seul fichier qui lit et ecrit les activites. Passe toujours par storage.js.
+// Les fonctions qui modifient renvoient { ok: true, activity, conflicts } ou { ok: false, errors }.
+// "conflicts" liste les activites qui chevauchent celle qui vient d'etre enregistree.
 import { KEYS, getSession, readList, write } from '@/services/storage'
+import { findConflictsFor } from '@/lib/conflicts'
 import { ACTIVITY_TYPES, CATEGORIES, PRIORITIES, STATUSES } from '@/utils/constants'
 
 const LOCAL_ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/
@@ -14,12 +18,14 @@ function nowISO() {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
+// Utilisateur connecte (la session est ecrite par l'authentification de P1).
 function currentUserId() {
   return getSession()?.userId ?? null
 }
 
 const fail = (errors) => ({ ok: false, errors })
 
+// Renvoie un objet { champ: message } ; vide si tout est valide.
 function validate(data) {
   const errors = {}
   if (!data.title || !String(data.title).trim()) errors.title = 'Le titre est obligatoire.'
@@ -50,7 +56,6 @@ export function getActivity(id) {
   return readList(KEYS.activities).find((a) => a.id === id) ?? null
 }
 
-
 export function createActivity(data, userId = currentUserId()) {
   if (!userId) return fail({ userId: 'Aucun utilisateur connecte.' })
 
@@ -76,12 +81,13 @@ export function createActivity(data, userId = currentUserId()) {
     createdAt: nowISO(),
   }
 
+  const conflicts = findConflictsFor(activity, listActivities(userId))
+
   if (!write(KEYS.activities, [...readList(KEYS.activities), activity])) {
     return fail({ storage: 'Enregistrement impossible.' })
   }
-  return { ok: true, activity }
+  return { ok: true, activity, conflicts }
 }
-
 
 export function updateActivity(id, changes) {
   const all = readList(KEYS.activities)
@@ -97,12 +103,13 @@ export function updateActivity(id, changes) {
   const errors = validate(updated)
   if (Object.keys(errors).length > 0) return fail(errors)
 
+  const conflicts = findConflictsFor(updated, listActivities(updated.userId))
+
   const next = [...all]
   next[index] = updated
   if (!write(KEYS.activities, next)) return fail({ storage: 'Enregistrement impossible.' })
-  return { ok: true, activity: updated }
+  return { ok: true, activity: updated, conflicts }
 }
-
 
 export function deleteActivity(id) {
   const all = readList(KEYS.activities)
@@ -111,6 +118,7 @@ export function deleteActivity(id) {
   return write(KEYS.activities, next)
 }
 
+// Deplace l'activite a un nouveau debut et compte le report (pour le suivi).
 export function postponeActivity(id, newStart) {
   if (!isLocalISO(newStart)) return fail({ start: 'Date de debut invalide.' })
   const activity = getActivity(id)
