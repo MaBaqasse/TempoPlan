@@ -193,7 +193,7 @@ export function buildSeed(userId, now = new Date()) {
       type: 'flexible',
       category: 'personnel',
       priority: 'basse',
-      start: at(now, 3, 16),
+      start: at(now, 4, 16),
       durationMin: 60,
       deadline: at(now, 5, 18),
     }),
