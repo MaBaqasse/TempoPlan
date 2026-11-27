@@ -1,0 +1,3 @@
+Ajoutez ici : auth-bg.jpg  (photo de fond des pages d'inscription et de connexion : bureau, trombones, carnet).
+Exportez la photo SANS le voile indigo : le voile est ajouté par le code (layouts/AuthLayout.jsx).
+Si vous n'avez que la version avec voile, mettez bg-primary-500/70 -> bg-primary-500/0 dans AuthLayout.jsx.

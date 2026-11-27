@@ -1,10 +1,11 @@
-// P1 : bloque l'acces a l'application si l'utilisateur n'est pas connecte
-import { Navigate, Outlet } from 'react-router-dom'
-import { getSession } from '@/services/storage'
+// P1 : bloque l’accès à l’application si l’utilisateur n’est pas connecté
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { useAuthStore } from '@/store/authStore'
 
 export default function ProtectedRoute() {
-  // TODO (P1) : brancher sur authStore. Pour le developpement, mettre DEV_BYPASS a true.
-  const DEV_BYPASS = true
-  if (!DEV_BYPASS && !getSession()) return <Navigate to="/login" replace />
+  const user = useAuthStore((s) => s.user)
+  const location = useLocation()
+
+  if (!user) return <Navigate to="/login" replace state={{ from: location }} />
   return <Outlet />
 }
