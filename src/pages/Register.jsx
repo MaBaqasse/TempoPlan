@@ -12,7 +12,7 @@ import Checkbox from '@/components/ui/Checkbox'
 import Button from '@/components/ui/Button'
 import { useAuthStore } from '@/store/authStore'
 
-const NEXT_PAGE = '/app' // TODO : passer à '/onboarding' quand la page Onboarding sera prête
+const NEXT_PAGE = '/onboarding'
 const REQUIRED = 'Ce champ est obligatoire.'
 
 const schema = z

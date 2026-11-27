@@ -21,4 +21,20 @@ export const useAuthStore = create((set) => ({
     authService.logout()
     set({ user: null })
   },
+
+  updateProfile(changes) {
+    const result = authService.updateProfile(changes)
+    if (result.ok) set({ user: result.user })
+    return result
+  },
+
+  changePassword(data) {
+    return authService.changePassword(data)
+  },
+
+  deleteAccount() {
+    const result = authService.deleteAccount()
+    if (result.ok) set({ user: null })
+    return result
+  },
 }))
