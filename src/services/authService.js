@@ -161,3 +161,63 @@ export async function loginUser({ email, password, remember = false }) {
   startSession(user.id, remember)
   return { ok: true, user: publicUser(user) }
 }
+
+// ---- Ajouts : profil, mot de passe, suppression du compte (page Paramètres et Onboarding) ----
+
+function removeUserEntries(key, userId) {
+  if (!key) return
+  const list = read(key, [])
+  if (Array.isArray(list))
+    write(
+      key,
+      list.filter((item) => item.userId !== userId)
+    )
+}
+
+// Modifie le prénom, le nom, le profil ou onboardingDone. Renvoie { ok, user } ou { ok: false, error }
+export function updateProfile(changes) {
+  const current = getCurrentUser()
+  if (!current) return { ok: false, error: 'Session expirée. Reconnectez-vous.' }
+
+  const users = listUsers()
+  const index = users.findIndex((u) => u.id === current.id)
+  if (index === -1) return { ok: false, error: 'Compte introuvable.' }
+
+  const patch = {}
+  for (const field of ['firstName', 'lastName', 'profile', 'onboardingDone']) {
+    if (field in changes)
+      patch[field] = typeof changes[field] === 'string' ? changes[field].trim() : changes[field]
+  }
+  users[index] = { ...users[index], ...patch }
+  saveUsers(users)
+  return { ok: true, user: publicUser(users[index]) }
+}
+
+export async function changePassword({ currentPassword, newPassword }) {
+  const current = getCurrentUser()
+  if (!current) return { ok: false, error: 'Session expirée. Reconnectez-vous.' }
+
+  const users = listUsers()
+  const index = users.findIndex((u) => u.id === current.id)
+  if (index === -1) return { ok: false, error: 'Compte introuvable.' }
+
+  const valid = (await hashPassword(currentPassword, users[index].id)) === users[index].password
+  if (!valid) return { ok: false, error: 'Le mot de passe actuel est incorrect.' }
+
+  users[index] = { ...users[index], password: await hashPassword(newPassword, users[index].id) }
+  saveUsers(users)
+  return { ok: true }
+}
+
+// Supprime le compte et toutes ses données, puis ferme la session
+export function deleteAccount() {
+  const current = getCurrentUser()
+  if (!current) return { ok: false }
+
+  saveUsers(listUsers().filter((u) => u.id !== current.id))
+  for (const key of [KEYS.activities, KEYS.goals, KEYS.settings, KEYS.notifications]) {
+    removeUserEntries(key, current.id)
+  }
+  logout()
+  return { ok: true }
+}
